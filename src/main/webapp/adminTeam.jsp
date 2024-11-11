@@ -213,7 +213,7 @@
         <!-- Sidebar Start -->
         <div class="sidebar pe-4 pb-3">
             <nav class="navbar bg-secondary navbar-dark">
-                <a href="index.html" class="navbar-brand mx-4 mb-3">
+                <a href="adminIndex" class="navbar-brand mx-4 mb-3">
                     <h3 class="text-primary">Plumberz</h3>
                 </a>
                 <div class="d-flex align-items-center ms-4 mb-4">
@@ -258,7 +258,7 @@
         <div class="content">
             <!-- Navbar Start -->
             <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
-                <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+                <a href="adminIndex" class="navbar-brand d-flex d-lg-none me-4">
                     <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
                 </a>
                 <a href="#" class="sidebar-toggler flex-shrink-0">
@@ -303,6 +303,9 @@
                                             <a class="btn tech-social mx-1" href="${technician.instagram}" target="_blank">
                                                 <i class="fab fa-instagram"></i>
                                             </a>
+                                            <!-- <a class="btn tech-social mx-1" href="deleteTeam?id=${technician.id}&image=${technician.image}" target="_blank">
+                                                 <i class="far fa-edit"></i>
+                                            </a> -->
                                             <a class="btn tech-social mx-1" href="deleteTeam?id=${technician.id}&image=${technician.image}" target="_blank">
                                                  <i class="far fa-trash-alt"></i>
                                             </a>

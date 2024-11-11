@@ -30,6 +30,42 @@ public class AdminIndexServlet extends HttpServlet {
         try {
             Connection con = Database.getCon();
 
+            String userSql = "SELECT COUNT(*) AS total_users FROM users";
+            PreparedStatement userStmt = con.prepareStatement(userSql);
+            ResultSet userRs = userStmt.executeQuery();
+
+            if (userRs.next()) {
+                int totalUsers = userRs.getInt("total_users");
+                request.setAttribute("totalUsers", totalUsers);
+            }
+
+            String messageSql = "SELECT COUNT(*) AS total_massages FROM message";
+            PreparedStatement messageStmt = con.prepareStatement(messageSql);
+            ResultSet messageRs = messageStmt.executeQuery();
+
+            if (messageRs.next()) {
+                int total_massages = messageRs.getInt("total_massages");
+                request.setAttribute("totalMessage", total_massages);
+            }
+
+            String contactSql = "SELECT COUNT(*) AS totalContact FROM contact_us";
+            PreparedStatement contactStmt = con.prepareStatement(contactSql);
+            ResultSet contactRs = contactStmt.executeQuery();
+
+            if (contactRs.next()) {
+                int totalContact = contactRs.getInt("totalContact");
+                request.setAttribute("totalContact", totalContact);
+            }
+
+            String conSql = "SELECT COUNT(*) AS totalQuery FROM contact";
+            PreparedStatement conStmt = con.prepareStatement(conSql);
+            ResultSet conRs = conStmt.executeQuery();
+
+            if (conRs.next()) {
+                int totalQuery = conRs.getInt("totalQuery");
+                request.setAttribute("totalQuery", totalQuery);
+            }
+
             String contactUs = "select * from contact_us order by created_time desc limit 4";
             PreparedStatement contactps = con.prepareStatement(contactUs);
             ResultSet contactrs = contactps.executeQuery();
