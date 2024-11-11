@@ -12,8 +12,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-@WebServlet("/adminChangePass")
-public class AdminChnagePassServlet extends HttpServlet {
+@WebServlet("/userChangePass")
+public class userChnagePassServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -24,14 +24,14 @@ public class AdminChnagePassServlet extends HttpServlet {
 
         response.setContentType("application/json");
         try (Connection con = Database.getCon()) {
-            String selectSql = "SELECT * FROM admin WHERE email = ? AND password = ?";
+            String selectSql = "SELECT * FROM users WHERE email = ? AND password = ?";
             try (PreparedStatement ps = con.prepareStatement(selectSql)) {
                 ps.setString(1, email);
                 ps.setString(2, password);
 
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        String updatePasswordQuery = "UPDATE admin SET password = ? WHERE email = ?";
+                        String updatePasswordQuery = "UPDATE users SET password = ? WHERE email = ?";
                         try (PreparedStatement updatePs = con.prepareStatement(updatePasswordQuery)) {
                             updatePs.setString(1, newPassword);
                             updatePs.setString(2, email);

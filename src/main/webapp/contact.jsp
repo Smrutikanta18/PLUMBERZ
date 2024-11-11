@@ -153,9 +153,9 @@ request.setAttribute("users",users);
                 <div class="col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                     <h6 class="text-secondary text-uppercase">Get In Touch</h6>
                     <h1 class="mb-4">Contact For Any Query</h1>
-                    <p class="mb-4">The contact form is currently inactive. Get a functional and working contact form with Ajax & PHP in a few minutes. Just copy and paste the files, add a little code and you're done. <a href="https://htmlcodex.com/contact-form">Download Now</a>.</p>
+                    <p class="mb-4"> This is our location.</p>
                     <iframe class="position-relative w-100"
-                        src="https://www.google.com/maps/place/Hauz+Khas,+New+Delhi,+Delhi/@28.5478086,77.2002668,15.57z/data=!4m6!3m5!1s0x390ce2127da1cf23:0xd89ebc21c669134d!8m2!3d28.5478897!4d77.2031247!16s%2Fm%2F0hnf2yt?entry=ttu&g_ep=EgoyMDI0MTAyMy4wIKXMDSoASAFQAw%3D%3D"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14022.983165729698!2d77.2002668!3d28.5478086!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce2127da1cf23%3A0xd89ebc21c669134d!2sHauz%20Khas%2C%20New%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1699655368324!5m2!1sen!2sin"
                         frameborder="0" style="height: 300px; border:0;" allowfullscreen="" aria-hidden="false"
                         tabindex="0"></iframe>
                 </div>

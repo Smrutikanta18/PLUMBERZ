@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="entities.User" %>
+<%@ page import="java.sql.*, java.util.ArrayList" %>
+
 
 <%
     User users = (User) request.getSession().getAttribute("users");
 %>
-<% String email = (String) request.getAttribute("email"); %>
-<% String phone = (String) request.getAttribute("phone"); %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,194 +21,142 @@
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
     <style>
-           /* Profile page custom CSS */
-           body {
-               background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-               font-family: 'Poppins', sans-serif;
-               padding: 20px;
-               color: #333;
-               line-height: 1.6;
-           }
+        /* Container styling */
+        .edit-profile-container {
+            display: flex;
+            flex-direction:column;
+            justify-content: center;
+            width: 970px;
+            margin-left: 150px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+            padding: 20px;
+            background-color: black;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
 
-           .profile-container {
-               margin: 0 auto;
-               max-width: 550px;
-               padding: 30px;
-               border-radius: 20px;
-               min-height: 60vh;
-               display: flex;
-               flex-direction: column;
-               justify-content: space-between;
-               transition: all 0.4s ease;
-           }
+        .edit-profile-container h2 {
+            margin-bottom: 20px;
+            color: white;
+        }
 
-           .profile-header {
-               text-align: center;
-               margin-bottom: 20px;
-           }
+        /* Form styling */
+        .edit-profile-form {
+            display: flex;
+            flex-direction: column;
+        }
 
-           .profile-img {
-               width: 140px;
-               height: 140px;
-               border-radius: 50%;
-               object-fit: cover;
-               border: 5px solid #007bff;
-               margin-bottom: 15px;
-               transition: transform 0.4s ease;
-           }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+            text-align: left;
+        }
 
-           .profile-img:hover {
-               transform: scale(1.1);
-           }
+        .form-group label {
+            font-weight: bold;
+            margin-left:250px;
+            color: #555;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
 
-           .profile-header h2 {
-               margin-bottom: 5px;
-               font-size: 2.4em;
-               font-weight: 700;
-               color: #343a40;
-           }
-
-           .profile-header p {
-               font-size: 1.2em;
-               color: #666;
-               margin-top: 5px;
-           }
-
-           .profile-info {
-               display: flex;
-               justify-content: space-between;
-               margin-bottom: 20px;
-           }
-
-           .profile-info label {
-               font-weight: 600;
-               font-size: 1.1em;
-               color: #007bff;
-               text-transform: uppercase;
-               letter-spacing: 1px;
-           }
-
-           .profile-info p {
-               font-size: 1.2em;
-               color: #333;
-               padding-left: 5px;
-           }
-           .sp{
-            font-size: 1em;
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="file"] {
+            width: 50%;
+            padding: 10px;
+            margin-left:250px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
             color: #333;
-            font-weight: normal;
-            text-transform:capitalize;
+        }
+
+        .form-group input[type="file"] {
+            padding: 5px;
+        }
+
+        .form-group input::placeholder {
+            color: #aaa;
+        }
+
+        /* Current image styling */
+        .current-image {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .current-image img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ddd;
+        }
+
+        /* Submit button styling */
+        .submit-button {
+            width: 30%;
+            margin-left: 325px;
+            padding: 10px;
+            background-color: red;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background-color: red;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .edit-profile-container {
+                width: 90%;
+                padding: 15px;
+                text-align: left;
             }
 
-           /* Buttons Styling */
-           .profile-actions {
-               text-align: center;
-               margin-top: 30px;
-           }
+            .form-group input[type="text"],
+            .form-group input[type="email"],
+            .form-group input[type="tel"]
+            .form-group input[type="file"] {
+                width: 30%;
+                font-size: 14px;
+                margin-left:0px;
+            }
+            .form-group input[type="text"],
+            .form-group input[type="email"],
+            .form-group input[type="tel"],
+            .form-group input[type="file"] {
+                    width: 250px;
+                    margin-left:0px;
+                    font-size: 14px;
+            }
 
-           .profile-actions .btn {
-               margin: 5px;
-               padding: 12px 25px;
-               border-radius: 25px;
-               font-size: 1.1em;
-               font-weight: 500;
-               letter-spacing: 0.5px;
-               transition: background-color 0.4s ease, transform 0.3s ease;
-               box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-           }
+            .form-group label {
+                    margin-left:0px;
+            }
 
-           .profile-actions .btn:hover {
-               transform: translateY(-5px);
-               box-shadow: 0 6px 14px rgba(0, 123, 255, 0.3);
-           }
+            .current-image {
+                text-align: center;
+            }
 
-           .btn-primary {
-               background: linear-gradient(45deg, #007bff, #0056b3);
-               border: none;
-               color: white;
-           }
-
-           .btn-primary:hover {
-               background: linear-gradient(45deg, #0056b3, #004494);
-           }
-
-           .btn-warning {
-               background: linear-gradient(45deg, #ffc107, #e0a800);
-               border: none;
-               color: white;
-           }
-
-           .btn-warning:hover {
-               background: linear-gradient(45deg, #e0a800, #c69500);
-           }
-
-           .btn-success {
-               background: linear-gradient(45deg, #28a745, #218838);
-               border: none;
-               color: white;
-           }
-
-           .btn-success:hover {
-               background: linear-gradient(45deg, #218838, #196f31);
-           }
-
-           /* Back button styling */
-           .back-btn {
-               text-align: center;
-               margin-top: 20px;
-           }
-
-           .back-btn a {
-               text-decoration: none;
-               font-size: 1.2em;
-               color: #007bff;
-               display: inline-flex;
-               align-items: center;
-               transition: color 0.3s ease;
-           }
-
-           .back-btn a i {
-               margin-right: 8px;
-               transition: transform 0.3s ease;
-           }
-
-           .back-btn a:hover {
-               color: #0056b3;
-           }
-
-           .back-btn a:hover i {
-               transform: translateX(-5px);
-           }
-
-           /* Responsive Adjustments */
-           @media (max-width: 768px) {
-               .profile-container {
-                   padding: 20px;
-               }
-
-               .profile-img {
-                   width: 110px;
-                   height: 110px;
-               }
-
-               .profile-header h2 {
-                   font-size: 2em;
-               }
-
-               .profile-header p {
-                   font-size: 1.1em;
-               }
-
-               .profile-info {
-                   flex-direction: column;
-               }
-
-               .profile-actions .btn {
-                   width: 100%;
-                   margin-bottom: 10px;
-               }
-           }
-     </style>
+            .submit-button {
+                font-size: 14px;
+                margin-left: 60px;
+                width: 50%;
+            }
+        }
+        </style>
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -254,9 +202,25 @@
                     <i class="fa fa-map-marker-alt text-primary me-2"></i>
                     <p class="m-0">210-B, Shahpur Jat, Opp. Asiad Village, New Delhi-110049</p>
                 </div>
+                <%
+                    User user = (User) request.getSession().getAttribute("users");
+                    String DB_URL = "jdbc:mysql://localhost:3306/plumber";
+                    String DB_USER = "root";
+                    String DB_PASSWORD = "system";
+
+                    try {
+                        Class.forName("com.mysql.cj.jdbc.Driver");
+                        Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+                        String sql = "SELECT * FROM admin"; // Fetch data by ID 1
+                        PreparedStatement ps = con.prepareStatement(sql);
+                        ResultSet rs = ps.executeQuery();
+
+                        if (rs.next()) {
+                %>
                 <div class="h-100 d-inline-flex align-items-center me-4">
                     <i class="far fa-envelope-open text-primary me-2"></i>
-                    <p class="m-0"><%= email%></p>
+                    <p class="m-0"><%= rs.getString("email")%></p>
                 </div>
                 <div class="h-100 d-inline-flex align-items-center">
                     <a class="btn btn-sm-square bg-white text-primary me-1" href=""><i class="fab fa-facebook-f"></i></a>
@@ -307,7 +271,7 @@
                     </div>
                     <div class="ms-3">
                         <p class="mb-1 text-white">Phone</p>
-                        <h5 class="m-0 text-secondary"><%= phone%></h5>
+                        <h5 class="m-0 text-secondary"><%= rs.getString("phone")%></h5>
                     </div>
                 </div>
             </div>
@@ -315,48 +279,43 @@
     </div>
     <!-- Navbar End -->
 
+                <div class="edit-profile-container">
+                    <h2>Edit Your Profile</h2>
+                    <form id="contactForm1"  class="edit-profile-form">
+                        <input type="hidden" id="adminId" name="userid" value="<%= user.getId()%>">
+                        <div class="form-group">
+                            <label for="firstName">User Name</label>
+                            <input type="text" id="firstName" name="firstname" placeholder="<%= user.getUserName()%>"  value ="<%= user.getUserName()%>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="<%= user.getEmail()%>" value ="<%= user.getEmail()%>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="<%= user.getPhone()%>" value ="<%= user.getPhone()%>" required>
+                        </div>
+                        <button type="button" onclick="editProfile()" class="submit-button">Save Changes</button>
+                        <div id="statusMessagePhone1" class="mt-2" style="font-size: 10px;"></div>
+                    </form>
+                </div>
 
     <!-- Page Header Start -->
     <div class="container-fluid page-header mb-5 py-5">
         <div class="container">
-            <h1 class="display-3 text-white mb-3 animated slideInDown">Profile</h1>
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Edit Profile</h1>
             <nav aria-label="breadcrumb animated slideInDown">
                 <ol class="breadcrumb text-uppercase">
                     <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
                     <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
-                    <li class="breadcrumb-item text-white active" aria-current="page">Services</li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Edit Profile</li>
                 </ol>
             </nav>
         </div>
     </div>
     <!-- Page Header End -->
 
-    <div class="container">
-        <div class="profile-container">
-            <div class="profile-header">
-                <img src="img1/userProfile.png" class="profile-img" alt="Profile Image">
-                <h2><%= users != null ? users.getUserName() : "Guest" %></h2>
-                <p><%= users != null ? users.getEmail() : "No email available" %></p>
-            </div>
 
-            <div class="profile-info">
-                <div>
-                    <label>Phone Number:</label>
-                    <p><%= users != null ? users.getPhone() : "Not provided" %></p>
-                </div>
-                <div>
-                    <label>Email:</label>
-                    <p><%= users != null ? users.getEmail() : "Not provided" %></p>
-                </div>
-            </div>
-
-            <div class="profile-actions">
-                <a href="editUserProfile.jsp?id=<%= users.getId()%>" class="btn btn-primary">Edit Profile</a>
-                <a href="userChangePass.jsp?id=<%= users.getId()%>" class="btn btn-warning">Change Password</a>
-                <a href="bookings" class="btn btn-success">See Your Bookings</a>
-            </div>
-        </div>
-    </div>
 
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
@@ -365,8 +324,14 @@
                 <div class="col-lg-3 col-md-6">
                     <h4 class="text-light mb-4">Address</h4>
                     <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>210-B, Shahpur Jat, Opp. Asiad Village, New Delhi-110049</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i><%= phone%></p>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i><%= email%></p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i><%= rs.getString("phone")%></p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i><%= rs.getString("email")%></p>
+                    <%
+                                                     }
+                                                 } catch (Exception e) {
+                                                     e.printStackTrace();
+                                                 }
+                                            %>
                     <div class="d-flex pt-2">
                         <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-whatsapp"></i></a>
                         <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
@@ -496,6 +461,40 @@
         }, 3000);
     }
 </script>
+<script>
+      function editProfile() {
+          const formElement = document.getElementById("contactForm1");
+          const formData = new FormData(formElement);
+
+          $.ajax({
+              type: "POST",
+              url: "userEditProfile",
+              data: formData,
+              contentType: false, // Prevent jQuery from overriding the content type
+              processData: false, // Prevent jQuery from processing the data
+              success: function(response) {
+                  if (response.success) {
+                      $("#statusMessagePhone1").html("<div style='color: green;'>Update successfully!</div>");
+                      $("#contactForm1")[0].reset(); // Reset the form on success
+                  } else {
+                      $("#statusMessagePhone1").html("<div style='color: red;'>Error updating profile.</div>");
+                  }
+                  clearMessageAfterTimeoutPhone();
+              },
+              error: function(xhr, status, error) {
+                  console.error("AJAX error:", status, error); // Debugging: Log AJAX error
+                  $("#statusMessagePhone1").html("<div style='color: red;'>An error occurred.</div>");
+                  clearMessageAfterTimeoutPhone();
+              }
+          });
+      }
+
+        function clearMessageAfterTimeoutPhone() {
+            setTimeout(function() {
+                $("#statusMessagePhone1").html(""); // Clears the status message
+            }, 3000);
+        }
+    </script>
 </body>
 
 </html>

@@ -363,9 +363,11 @@ request.setAttribute("users",users);
                                 <div class="col-12 col-sm-6">
                                     <select class="form-select border-0" name="service" style="height: 55px;">
                                         <option selected>Select A Service</option>
-                                        <option value="1">Service 1</option>
-                                        <option value="2">Service 2</option>
-                                        <option value="3">Service 3</option>
+                                        <option value="Drain Cleaning">Drain Cleaning</option>
+                                        <option value="Sewer Line">Sewer Line</option>
+                                        <option value="Water Heating">Water Heating</option>
+                                        <option value="Toilet Cleaning">Toilet Cleaning</option>
+                                        <option value="Broken Pipe">Broken Pipe</option>
                                     </select>
                                 </div>
                                 <div class="col-12 col-sm-6">
@@ -378,6 +380,7 @@ request.setAttribute("users",users);
                                 <div class="col-12">
                                     <textarea class="form-control border-0" name="request" placeholder="Special Request"></textarea>
                                 </div>
+                                <p>Please login for service.</p>
                                 <div class="col-12">
                                     <button class="btn btn-primary w-100 py-3" type="submit">Book Now</button>
                                 </div>

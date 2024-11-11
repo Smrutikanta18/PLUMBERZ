@@ -275,6 +275,7 @@ request.setAttribute("users",users);
                                 <div class="col-12">
                                     <textarea class="form-control border-0" name="request" placeholder="Special Request"></textarea>
                                 </div>
+                                <p>Please login for service.</p>
                                 <div class="col-12">
                                     <button class="btn btn-primary w-100 py-3" type="submit">Book Now</button>
                                 </div>

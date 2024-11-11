@@ -1,12 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="entities.User" %>
+<%@ page import="java.util.*" %>
+<%@ page import="entities.*" %>
+<%@ page import="java.sql.*, java.util.ArrayList" %>
 
 <%
-    User users = (User) request.getSession().getAttribute("users");
+User users=(User)request.getSession().getAttribute("users");
+if(users != null){
+request.setAttribute("users",users);
+}
 %>
-<% String email = (String) request.getAttribute("email"); %>
-<% String phone = (String) request.getAttribute("phone"); %>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,198 +21,115 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
+    <style>
+        .password-reset-container {
+            margin: 0 auto;
+            max-width: 350px;
+            max-height: 580px;
+            background-color: #6295d9;
+            padding: 30px;
+            border-radius: 15px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .password-reset-header h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .password-reset-header h2::after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 3px;
+            background-color: red;
+            margin: 10px auto 0;
+        }
+
+        /* Button Styles */
+        .password-reset-btn {
+            background-color: red;
+            border: none;
+            font-size: 1.1rem;
+            padding: 10px 30px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .password-reset-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Form Styles */
+        .password-reset-group label {
+            font-size: 1rem;
+            color: black;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .password-reset-control {
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .password-reset-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        }
+
+        .password-reset-actions {
+            margin-top: 20px;
+        }
+
+        /* Alert Styles */
+        .alert {
+            font-size: 0.95rem;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Error Message Styles */
+        .password-reset-error-message {
+            color: #d9534f;
+            display: none;
+            font-size: 0.875rem;
+            margin-top: 10px;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 576px) {
+            .password-reset-container {
+                padding: 20px;
+            }
+
+            .password-reset-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .password-reset-btn {
+                font-size: 1rem;
+                padding: 8px 25px;
+            }
+
+            .password-reset-back-btn a {
+                font-size: 1rem;
+            }
+        }
+        </style>
 
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
-    <style>
-           /* Profile page custom CSS */
-           body {
-               background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-               font-family: 'Poppins', sans-serif;
-               padding: 20px;
-               color: #333;
-               line-height: 1.6;
-           }
-
-           .profile-container {
-               margin: 0 auto;
-               max-width: 550px;
-               padding: 30px;
-               border-radius: 20px;
-               min-height: 60vh;
-               display: flex;
-               flex-direction: column;
-               justify-content: space-between;
-               transition: all 0.4s ease;
-           }
-
-           .profile-header {
-               text-align: center;
-               margin-bottom: 20px;
-           }
-
-           .profile-img {
-               width: 140px;
-               height: 140px;
-               border-radius: 50%;
-               object-fit: cover;
-               border: 5px solid #007bff;
-               margin-bottom: 15px;
-               transition: transform 0.4s ease;
-           }
-
-           .profile-img:hover {
-               transform: scale(1.1);
-           }
-
-           .profile-header h2 {
-               margin-bottom: 5px;
-               font-size: 2.4em;
-               font-weight: 700;
-               color: #343a40;
-           }
-
-           .profile-header p {
-               font-size: 1.2em;
-               color: #666;
-               margin-top: 5px;
-           }
-
-           .profile-info {
-               display: flex;
-               justify-content: space-between;
-               margin-bottom: 20px;
-           }
-
-           .profile-info label {
-               font-weight: 600;
-               font-size: 1.1em;
-               color: #007bff;
-               text-transform: uppercase;
-               letter-spacing: 1px;
-           }
-
-           .profile-info p {
-               font-size: 1.2em;
-               color: #333;
-               padding-left: 5px;
-           }
-           .sp{
-            font-size: 1em;
-            color: #333;
-            font-weight: normal;
-            text-transform:capitalize;
-            }
-
-           /* Buttons Styling */
-           .profile-actions {
-               text-align: center;
-               margin-top: 30px;
-           }
-
-           .profile-actions .btn {
-               margin: 5px;
-               padding: 12px 25px;
-               border-radius: 25px;
-               font-size: 1.1em;
-               font-weight: 500;
-               letter-spacing: 0.5px;
-               transition: background-color 0.4s ease, transform 0.3s ease;
-               box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-           }
-
-           .profile-actions .btn:hover {
-               transform: translateY(-5px);
-               box-shadow: 0 6px 14px rgba(0, 123, 255, 0.3);
-           }
-
-           .btn-primary {
-               background: linear-gradient(45deg, #007bff, #0056b3);
-               border: none;
-               color: white;
-           }
-
-           .btn-primary:hover {
-               background: linear-gradient(45deg, #0056b3, #004494);
-           }
-
-           .btn-warning {
-               background: linear-gradient(45deg, #ffc107, #e0a800);
-               border: none;
-               color: white;
-           }
-
-           .btn-warning:hover {
-               background: linear-gradient(45deg, #e0a800, #c69500);
-           }
-
-           .btn-success {
-               background: linear-gradient(45deg, #28a745, #218838);
-               border: none;
-               color: white;
-           }
-
-           .btn-success:hover {
-               background: linear-gradient(45deg, #218838, #196f31);
-           }
-
-           /* Back button styling */
-           .back-btn {
-               text-align: center;
-               margin-top: 20px;
-           }
-
-           .back-btn a {
-               text-decoration: none;
-               font-size: 1.2em;
-               color: #007bff;
-               display: inline-flex;
-               align-items: center;
-               transition: color 0.3s ease;
-           }
-
-           .back-btn a i {
-               margin-right: 8px;
-               transition: transform 0.3s ease;
-           }
-
-           .back-btn a:hover {
-               color: #0056b3;
-           }
-
-           .back-btn a:hover i {
-               transform: translateX(-5px);
-           }
-
-           /* Responsive Adjustments */
-           @media (max-width: 768px) {
-               .profile-container {
-                   padding: 20px;
-               }
-
-               .profile-img {
-                   width: 110px;
-                   height: 110px;
-               }
-
-               .profile-header h2 {
-                   font-size: 2em;
-               }
-
-               .profile-header p {
-                   font-size: 1.1em;
-               }
-
-               .profile-info {
-                   flex-direction: column;
-               }
-
-               .profile-actions .btn {
-                   width: 100%;
-                   margin-bottom: 10px;
-               }
-           }
-     </style>
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -240,7 +161,6 @@
     </div>
     <!-- Spinner End -->
 
-
     <!-- Topbar Start -->
     <div class="container-fluid bg-light d-none d-lg-block">
         <div class="row align-items-center top-bar">
@@ -254,9 +174,24 @@
                     <i class="fa fa-map-marker-alt text-primary me-2"></i>
                     <p class="m-0">210-B, Shahpur Jat, Opp. Asiad Village, New Delhi-110049</p>
                 </div>
+                <%
+                    String DB_URL = "jdbc:mysql://localhost:3306/plumber";
+                    String DB_USER = "root";
+                    String DB_PASSWORD = "system";
+
+                    try {
+                        Class.forName("com.mysql.cj.jdbc.Driver");
+                        Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+                        String sql = "SELECT * FROM admin"; // Fetch data by ID 1
+                        PreparedStatement ps = con.prepareStatement(sql);
+                        ResultSet rs = ps.executeQuery();
+
+                        if (rs.next()) {
+                %>
                 <div class="h-100 d-inline-flex align-items-center me-4">
                     <i class="far fa-envelope-open text-primary me-2"></i>
-                    <p class="m-0"><%= email%></p>
+                    <p class="m-0"><%= rs.getString("email")%></p>
                 </div>
                 <div class="h-100 d-inline-flex align-items-center">
                     <a class="btn btn-sm-square bg-white text-primary me-1" href=""><i class="fab fa-facebook-f"></i></a>
@@ -279,16 +214,16 @@
                 <span class="fa fa-bars"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
-                <div class="navbar-nav me-auto">
+                 <div class="navbar-nav me-auto">
                     <a href="index" class="nav-item nav-link">Home</a>
                     <a href="about" class="nav-item nav-link">About</a>
-                    <a href="service" class="nav-item nav-link ">Services</a>
+                    <a href="service" class="nav-item nav-link">Services</a>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Pages</a>
                         <div class="dropdown-menu fade-up m-0">
-                            <a href="booking" class="dropdown-item">Booking</a>
+                            <a href="bookings" class="dropdown-item ">Booking</a>
                             <a href="team" class="dropdown-item">Technicians</a>
-                            <a href="testimonial" class="dropdown-item">Testimonial</a>
+                            <a href="testimonial" class="dropdown-item ">Testimonial</a>
                             <a href="404" class="dropdown-item">404 Page</a>
                         </div>
                     </div>
@@ -307,7 +242,7 @@
                     </div>
                     <div class="ms-3">
                         <p class="mb-1 text-white">Phone</p>
-                        <h5 class="m-0 text-secondary"><%= phone%></h5>
+                        <h5 class="m-0 text-secondary"><%= rs.getString("phone")%></h5>
                     </div>
                 </div>
             </div>
@@ -319,44 +254,49 @@
     <!-- Page Header Start -->
     <div class="container-fluid page-header mb-5 py-5">
         <div class="container">
-            <h1 class="display-3 text-white mb-3 animated slideInDown">Profile</h1>
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Change Password</h1>
             <nav aria-label="breadcrumb animated slideInDown">
                 <ol class="breadcrumb text-uppercase">
                     <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
                     <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
-                    <li class="breadcrumb-item text-white active" aria-current="page">Services</li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Change Password</li>
                 </ol>
             </nav>
         </div>
     </div>
     <!-- Page Header End -->
 
-    <div class="container">
-        <div class="profile-container">
-            <div class="profile-header">
-                <img src="img1/userProfile.png" class="profile-img" alt="Profile Image">
-                <h2><%= users != null ? users.getUserName() : "Guest" %></h2>
-                <p><%= users != null ? users.getEmail() : "No email available" %></p>
-            </div>
+     <div class="container">
+                    <div class="password-reset-container">
+                        <div class="password-reset-header">
+                            <h2>Change Password</h2>
+                        </div>
 
-            <div class="profile-info">
-                <div>
-                    <label>Phone Number:</label>
-                    <p><%= users != null ? users.getPhone() : "Not provided" %></p>
+                        <form id="changePasswordForm">
+                            <div class="password-reset-group" >
+                                <label for="userEmail">Your Email</label>
+                                <input type="email" class="password-reset-control" id="userEmail" name="email" required>
+                            </div>
+                            <div class="password-reset-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" class="password-reset-control" id="currentPassword" name="password" required>
+                            </div>
+                            <div class="password-reset-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" class="password-reset-control" id="newPassword" name="newPassword" required>
+                            </div>
+                            <div class="password-reset-group">
+                                <label for="confirmNewPassword">Confirm New Password</label>
+                                <input type="password" class="password-reset-control" id="confirmNewPassword" name="confirmNewPassword" required>
+                                <div id="errorMessage" class="password-reset-error-message" style="display: none; color: red;">Passwords do not match!</div>
+                                <div id="statusMessagePhone" class="mt-2" style="font-size: 10px;"></div>
+                            </div>
+                            <div class="password-reset-actions text-center">
+                                <button type="button" onclick="editPassword()" class="password-reset-btn">Change</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div>
-                    <label>Email:</label>
-                    <p><%= users != null ? users.getEmail() : "Not provided" %></p>
-                </div>
-            </div>
-
-            <div class="profile-actions">
-                <a href="editUserProfile.jsp?id=<%= users.getId()%>" class="btn btn-primary">Edit Profile</a>
-                <a href="userChangePass.jsp?id=<%= users.getId()%>" class="btn btn-warning">Change Password</a>
-                <a href="bookings" class="btn btn-success">See Your Bookings</a>
-            </div>
-        </div>
-    </div>
 
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
@@ -365,8 +305,14 @@
                 <div class="col-lg-3 col-md-6">
                     <h4 class="text-light mb-4">Address</h4>
                     <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>210-B, Shahpur Jat, Opp. Asiad Village, New Delhi-110049</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i><%= phone%></p>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i><%= email%></p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i><%= rs.getString("phone")%></p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i><%= rs.getString("email")%></p>
+                    <%
+                                                     }
+                                                 } catch (Exception e) {
+                                                     e.printStackTrace();
+                                                 }
+                                            %>
                     <div class="d-flex pt-2">
                         <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-whatsapp"></i></a>
                         <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
@@ -449,6 +395,49 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script>
+               $(document).ready(function () {
+                   $("#messageForm").on("submit", function (e) {
+                       e.preventDefault(); // Prevent the form from submitting automatically
+
+                       var phoneInput = $("input[name='phone']");
+                       // Check validity using client-side validation
+                       if (!phoneInput[0].checkValidity()) {
+                           alert("Phone number must be 10 digits and valid.");
+                           return; // Stop the form from submitting
+                       }
+
+                       var dateValue = $("input[name='date']").val();
+                       if (dateValue) {
+                           var dateParts = dateValue.split("/");
+                           var formattedDate = dateParts[2] + "-" + dateParts[0] + "-" + dateParts[1];
+                           $("input[name='date']").val(formattedDate); // Update the date field with formatted date
+                       }
+
+                       var formData = $(this).serialize();
+
+                       // Send form data via AJAX
+                       $.ajax({
+                           type: "POST",
+                           url: "submitMessage", // Servlet URL
+                           data: formData,
+                           success: function (response) {
+                               if (response.status === "success") {
+                                   alert("Message sent successfully!");
+                                   $("#messageForm")[0].reset(); // Reset the form
+                               } else if (response.status === "error") {
+                                   alert(response.message); // Display the error message
+                               }
+                           },
+                           error: function (xhr, status, error) {
+                               // Handle AJAX errors
+                               var errorMessage = xhr.responseText ? xhr.responseText : "An error occurred.";
+                               alert(errorMessage); // Show error message
+                           }
+                       });
+                   });
+               });
+           </script>
 <script>
     function submitPhone() {
         const phone = document.getElementById("number9").value.trim(); // Use trim() to remove extra spaces
@@ -495,6 +484,64 @@
             $("#statusMessagePhone").html(""); // Clears the status message
         }, 3000);
     }
+</script>
+<script>
+function editPassword() {
+    const email = document.getElementById("userEmail").value;
+    const currentPassword = document.getElementById("currentPassword").value;
+    const newPassword = document.getElementById("newPassword").value;
+    const confirmNewPassword = document.getElementById("confirmNewPassword").value;
+    const errorMessage = document.getElementById("errorMessage");
+    const statusMessage = document.getElementById("statusMessagePhone");
+
+    // Validate that the new passwords match
+    if (newPassword !== confirmNewPassword) {
+        errorMessage.style.display = "block";
+        return;
+    } else {
+        errorMessage.style.display = "none";
+    }
+
+    // Create an object to store form data
+    const formData = new URLSearchParams();
+    formData.append("email", email);
+    formData.append("password", currentPassword);
+    formData.append("newPassword", newPassword);
+
+    // Send the AJAX request
+    fetch("userChangePass", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: formData.toString()
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            statusMessage.textContent = data.message;
+            statusMessage.style.color = "green";
+        } else {
+            statusMessage.textContent = data.message;
+            statusMessage.style.color = "red";
+        }
+
+        // Show the message and then hide it after 3 seconds
+        statusMessage.style.display = "block";
+        setTimeout(() => {
+            statusMessage.style.display = "none";
+        }, 3000);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        statusMessage.textContent = "An error occurred. Please try again.";
+        statusMessage.style.color = "red";
+        statusMessage.style.display = "block";
+        setTimeout(() => {
+            statusMessage.style.display = "none";
+        }, 3000);
+    });
+}
 </script>
 </body>
 

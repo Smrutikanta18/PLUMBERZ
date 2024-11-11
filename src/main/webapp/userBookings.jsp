@@ -1,12 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="entities.User" %>
-
+<%@ page import="java.util.*" %>
+<%@ page import="entities.*" %>
 <%
-    User users = (User) request.getSession().getAttribute("users");
+User users=(User)request.getSession().getAttribute("users");
+if(users != null){
+request.setAttribute("users",users);
+}
 %>
 <% String email = (String) request.getAttribute("email"); %>
 <% String phone = (String) request.getAttribute("phone"); %>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,194 +25,170 @@
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
     <style>
-           /* Profile page custom CSS */
-           body {
-               background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-               font-family: 'Poppins', sans-serif;
-               padding: 20px;
-               color: #333;
-               line-height: 1.6;
-           }
+      .booking-container {
+          margin-top: 50px;
+      }
 
-           .profile-container {
-               margin: 0 auto;
-               max-width: 550px;
-               padding: 30px;
-               border-radius: 20px;
-               min-height: 60vh;
-               display: flex;
-               flex-direction: column;
-               justify-content: space-between;
-               transition: all 0.4s ease;
-           }
+      /* Header */
+      .booking-header {
+          font-size: 36px;
+          color: white;
+          font-weight: 600;
+          text-align: center;
+          margin-bottom: 30px;
+      }
 
-           .profile-header {
-               text-align: center;
-               margin-bottom: 20px;
-           }
+      /* Table Styling */
+      .booking-table-wrapper {
+          overflow-x: auto;
+          border-radius: 8px;
+          background-color: #fff;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          padding: 15px;
+      }
 
-           .profile-img {
-               width: 140px;
-               height: 140px;
-               border-radius: 50%;
-               object-fit: cover;
-               border: 5px solid #007bff;
-               margin-bottom: 15px;
-               transition: transform 0.4s ease;
-           }
+      .booking-table {
+          width: 100%;
+          border-collapse: collapse;
+          table-layout: auto;
+      }
 
-           .profile-img:hover {
-               transform: scale(1.1);
-           }
+      .booking-table-header {
+          background-color: #343a40;
+          color: white;
+          font-weight: bold;
+          font-size: 16px;
+      }
 
-           .profile-header h2 {
-               margin-bottom: 5px;
-               font-size: 2.4em;
-               font-weight: 700;
-               color: #343a40;
-           }
+      .booking-table-row {
+          background-color: #f9f9f9;
+          color: black;
+      }
 
-           .profile-header p {
-               font-size: 1.2em;
-               color: #666;
-               margin-top: 5px;
-           }
+      .booking-table-row:hover {
+          background-color: #f1f1f1;
+      }
 
-           .profile-info {
-               display: flex;
-               justify-content: space-between;
-               margin-bottom: 20px;
-           }
+      td {
+          padding: 12px;
+          text-align: center;
+          font-size: 14px;
+      }
 
-           .profile-info label {
-               font-weight: 600;
-               font-size: 1.1em;
-               color: #007bff;
-               text-transform: uppercase;
-               letter-spacing: 1px;
-           }
+      /* Button Styles */
+      .booking-table-actions {
+          display: flex;
+          justify-content: space-around;
+      }
 
-           .profile-info p {
-               font-size: 1.2em;
-               color: #333;
-               padding-left: 5px;
-           }
-           .sp{
-            font-size: 1em;
-            color: #333;
-            font-weight: normal;
-            text-transform:capitalize;
+      .action-form {
+          margin: 0;
+      }
+
+      .btn {
+          padding: 8px 16px;
+          font-size: 14px;
+          border-radius: 5px;
+          border: none;
+          color: black;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+      }
+
+      .btn-work {
+          background-color: #28a745;
+          color: black;
+      }
+
+      .btn-work:hover {
+          background-color: #218838;
+      }
+
+      .btn-delete {
+          background-color: #dc3545;
+          color: white;
+      }
+
+      .btn-delete:hover {
+          background-color: #c82333;
+      }
+
+      /* Scrollbar Styling for Overflowing Data */
+      .booking-table-wrapper {
+          max-width: 100%;
+          overflow-x: auto;
+      }
+
+      /* Mobile Responsiveness */
+      @media (max-width: 768px) {
+          .booking-header {
+              font-size: 28px;
+          }
+
+          td {
+              font-size: 12px;
+              padding: 10px;
+          }
+          .booking-table-row {
+                color: black;
             }
 
-           /* Buttons Styling */
-           .profile-actions {
-               text-align: center;
-               margin-top: 30px;
-           }
+          .btn {
+              font-size: 12px;
+              padding: 6px 12px;
+          }
 
-           .profile-actions .btn {
-               margin: 5px;
-               padding: 12px 25px;
-               border-radius: 25px;
-               font-size: 1.1em;
-               font-weight: 500;
-               letter-spacing: 0.5px;
-               transition: background-color 0.4s ease, transform 0.3s ease;
-               box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-           }
+          .booking-table-wrapper {
+              padding: 10px;
+          }
 
-           .profile-actions .btn:hover {
-               transform: translateY(-5px);
-               box-shadow: 0 6px 14px rgba(0, 123, 255, 0.3);
-           }
+          .booking-table {
+              font-size: 12px;
+          }
 
-           .btn-primary {
-               background: linear-gradient(45deg, #007bff, #0056b3);
-               border: none;
-               color: white;
-           }
+          .booking-table-header th {
+              padding: 8px;
+          }
 
-           .btn-primary:hover {
-               background: linear-gradient(45deg, #0056b3, #004494);
-           }
+          .booking-table-actions {
+              flex-direction: column;
+              align-items: flex-start;
+          }
 
-           .btn-warning {
-               background: linear-gradient(45deg, #ffc107, #e0a800);
-               border: none;
-               color: white;
-           }
+          .btn {
+              width: 100%;
+              margin-bottom: 10px;
+          }
+      }
 
-           .btn-warning:hover {
-               background: linear-gradient(45deg, #e0a800, #c69500);
-           }
+      @media (max-width: 576px) {
+          .booking-header {
+              font-size: 24px;
+          }
 
-           .btn-success {
-               background: linear-gradient(45deg, #28a745, #218838);
-               border: none;
-               color: white;
-           }
+          td {
+              font-size: 10px;
+              padding: 8px;
+          }
 
-           .btn-success:hover {
-               background: linear-gradient(45deg, #218838, #196f31);
-           }
+          .btn {
+              font-size: 10px;
+              padding: 5px 10px;
+          }
 
-           /* Back button styling */
-           .back-btn {
-               text-align: center;
-               margin-top: 20px;
-           }
+          .booking-table-wrapper {
+              padding: 5px;
+          }
 
-           .back-btn a {
-               text-decoration: none;
-               font-size: 1.2em;
-               color: #007bff;
-               display: inline-flex;
-               align-items: center;
-               transition: color 0.3s ease;
-           }
+          .booking-table {
+              font-size: 10px;
+          }
 
-           .back-btn a i {
-               margin-right: 8px;
-               transition: transform 0.3s ease;
-           }
-
-           .back-btn a:hover {
-               color: #0056b3;
-           }
-
-           .back-btn a:hover i {
-               transform: translateX(-5px);
-           }
-
-           /* Responsive Adjustments */
-           @media (max-width: 768px) {
-               .profile-container {
-                   padding: 20px;
-               }
-
-               .profile-img {
-                   width: 110px;
-                   height: 110px;
-               }
-
-               .profile-header h2 {
-                   font-size: 2em;
-               }
-
-               .profile-header p {
-                   font-size: 1.1em;
-               }
-
-               .profile-info {
-                   flex-direction: column;
-               }
-
-               .profile-actions .btn {
-                   width: 100%;
-                   margin-bottom: 10px;
-               }
-           }
-     </style>
+          .booking-table-header th {
+              padding: 6px;
+          }
+      }
+        </style>
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -279,22 +259,22 @@
                 <span class="fa fa-bars"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
-                <div class="navbar-nav me-auto">
+                 <div class="navbar-nav me-auto">
                     <a href="index" class="nav-item nav-link">Home</a>
                     <a href="about" class="nav-item nav-link">About</a>
-                    <a href="service" class="nav-item nav-link ">Services</a>
+                    <a href="service" class="nav-item nav-link">Services</a>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                        <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Pages</a>
                         <div class="dropdown-menu fade-up m-0">
-                            <a href="booking" class="dropdown-item">Booking</a>
+                            <a href="bookings" class="dropdown-item active">Booking</a>
                             <a href="team" class="dropdown-item">Technicians</a>
-                            <a href="testimonial" class="dropdown-item">Testimonial</a>
+                            <a href="testimonial" class="dropdown-item ">Testimonial</a>
                             <a href="404" class="dropdown-item">404 Page</a>
                         </div>
                     </div>
                     <a href="contact" class="nav-item nav-link">Contact</a>
                     <% if(users != null){ %>
-                    <a href="profile" class="nav-item nav-link active">Profile</a>
+                    <a href="profile" class="nav-item nav-link">Profile</a>
                     <a href="bookings" class="nav-item nav-link">Bookings</a>
                     <a href="userLogout" class="nav-item nav-link">Logout</a>
                     <% }else{ %>
@@ -319,44 +299,49 @@
     <!-- Page Header Start -->
     <div class="container-fluid page-header mb-5 py-5">
         <div class="container">
-            <h1 class="display-3 text-white mb-3 animated slideInDown">Profile</h1>
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Booking</h1>
             <nav aria-label="breadcrumb animated slideInDown">
                 <ol class="breadcrumb text-uppercase">
                     <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
                     <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
-                    <li class="breadcrumb-item text-white active" aria-current="page">Services</li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Booking</li>
                 </ol>
             </nav>
         </div>
     </div>
     <!-- Page Header End -->
 
-    <div class="container">
-        <div class="profile-container">
-            <div class="profile-header">
-                <img src="img1/userProfile.png" class="profile-img" alt="Profile Image">
-                <h2><%= users != null ? users.getUserName() : "Guest" %></h2>
-                <p><%= users != null ? users.getEmail() : "No email available" %></p>
-            </div>
-
-            <div class="profile-info">
-                <div>
-                    <label>Phone Number:</label>
-                    <p><%= users != null ? users.getPhone() : "Not provided" %></p>
-                </div>
-                <div>
-                    <label>Email:</label>
-                    <p><%= users != null ? users.getEmail() : "Not provided" %></p>
-                </div>
-            </div>
-
-            <div class="profile-actions">
-                <a href="editUserProfile.jsp?id=<%= users.getId()%>" class="btn btn-primary">Edit Profile</a>
-                <a href="userChangePass.jsp?id=<%= users.getId()%>" class="btn btn-warning">Change Password</a>
-                <a href="bookings" class="btn btn-success">See Your Bookings</a>
-            </div>
-        </div>
-    </div>
+    <div class="container booking-container">
+                        <h2 class="booking-header">Admin Bookings</h2>
+                        <div class="table-responsive booking-table-wrapper">
+                            <table class="table booking-table">
+                                <thead class="booking-table-header">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Service</th>
+                                        <th>Request</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="message" items="${message}">
+                                        <tr class="booking-table-row">
+                                            <td>${message.id}</td>
+                                            <td>${message.name}</td>
+                                            <td>${message.phone}</td>
+                                            <td>${message.service}</td>
+                                            <td>${message.request}</td>
+                                            <td>${message.date}</td>
+                                            <td>pending</td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
@@ -449,6 +434,49 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script>
+               $(document).ready(function () {
+                   $("#messageForm").on("submit", function (e) {
+                       e.preventDefault(); // Prevent the form from submitting automatically
+
+                       var phoneInput = $("input[name='phone']");
+                       // Check validity using client-side validation
+                       if (!phoneInput[0].checkValidity()) {
+                           alert("Phone number must be 10 digits and valid.");
+                           return; // Stop the form from submitting
+                       }
+
+                       var dateValue = $("input[name='date']").val();
+                       if (dateValue) {
+                           var dateParts = dateValue.split("/");
+                           var formattedDate = dateParts[2] + "-" + dateParts[0] + "-" + dateParts[1];
+                           $("input[name='date']").val(formattedDate); // Update the date field with formatted date
+                       }
+
+                       var formData = $(this).serialize();
+
+                       // Send form data via AJAX
+                       $.ajax({
+                           type: "POST",
+                           url: "submitMessage", // Servlet URL
+                           data: formData,
+                           success: function (response) {
+                               if (response.status === "success") {
+                                   alert("Message sent successfully!");
+                                   $("#messageForm")[0].reset(); // Reset the form
+                               } else if (response.status === "error") {
+                                   alert(response.message); // Display the error message
+                               }
+                           },
+                           error: function (xhr, status, error) {
+                               // Handle AJAX errors
+                               var errorMessage = xhr.responseText ? xhr.responseText : "An error occurred.";
+                               alert(errorMessage); // Show error message
+                           }
+                       });
+                   });
+               });
+           </script>
 <script>
     function submitPhone() {
         const phone = document.getElementById("number9").value.trim(); // Use trim() to remove extra spaces
